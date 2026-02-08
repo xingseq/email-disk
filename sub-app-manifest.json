@@ -1,0 +1,134 @@
+{
+  "$schema": "../../docs/sub-app-manifest.schema.json",
+  "name": "email-cli",
+  "displayName": "邮盘",
+  "version": "0.2.0",
+  "description": "邮盘 - 通过邮箱附件实现的云盘工具，支持 CLI 和 Web UI 两种使用方式",
+  "required": false,
+  
+  "capabilities": [
+    "email.send:smtp",
+    "email.receive:imap",
+    "email.test:connection",
+    "email.config:manage",
+    "disk.file:list",
+    "disk.file:upload",
+    "disk.file:download",
+    "disk.file:delete"
+  ],
+  
+  "cli": {
+    "enabled": true,
+    "bin": "./bin/najie-email.js",
+    "style": "subcommand",
+    "commands": {
+      "config:set": {
+        "description": "设置邮箱配置",
+        "args": ["--preset", "--user", "--pass"]
+      },
+      "config:show": {
+        "description": "显示当前配置"
+      },
+      "config:test": {
+        "description": "测试连接",
+        "args": ["--smtp", "--imap"]
+      },
+      "send": {
+        "description": "发送邮件",
+        "args": ["--to", "--subject", "--body", "--attach"]
+      },
+      "list": {
+        "description": "列出邮件",
+        "args": ["--filter", "--limit"]
+      },
+      "list-json": {
+        "description": "列出邮件（JSON 输出）",
+        "args": ["--filter", "--limit"]
+      },
+      "fetch": {
+        "description": "获取邮件详情和附件（JSON 输出）",
+        "args": ["<uid>", "--output"]
+      },
+      "serve": {
+        "description": "启动 Web UI 服务",
+        "args": ["--port"]
+      },
+      "ls": {
+        "description": "列出云盘文件"
+      },
+      "upload": {
+        "description": "上传文件到云盘",
+        "args": ["<file>"]
+      },
+      "rm": {
+        "description": "删除云盘文件",
+        "args": ["<uid>"]
+      }
+    }
+  },
+  
+  "api": {
+    "enabled": true,
+    "module": "./lib/index.js",
+    "exports": {
+      "testSmtp": {
+        "description": "测试 SMTP 连接",
+        "params": ["config"],
+        "returns": "{ success: boolean, error?: string }"
+      },
+      "testImap": {
+        "description": "测试 IMAP 连接",
+        "params": ["config"],
+        "returns": "{ success: boolean, error?: string }"
+      },
+      "sendEmail": {
+        "description": "发送邮件",
+        "params": ["config", "options"],
+        "returns": "{ success: boolean, messageId?: string, error?: string }"
+      },
+      "listEmails": {
+        "description": "获取邮件列表",
+        "params": ["config", "options"],
+        "returns": "{ success: boolean, emails?: Array, error?: string }"
+      },
+      "listFiles": {
+        "description": "列出云盘文件",
+        "params": [],
+        "returns": "{ files: Array }"
+      },
+      "uploadFile": {
+        "description": "上传文件",
+        "params": ["data", "filename"],
+        "returns": "{ filename, size }"
+      },
+      "downloadFile": {
+        "description": "下载文件",
+        "params": ["uid"],
+        "returns": "{ data, filename, contentType }"
+      },
+      "deleteFile": {
+        "description": "删除文件",
+        "params": ["uid"],
+        "returns": "void"
+      }
+    }
+  },
+  
+  "ui": {
+    "enabled": true,
+    "port": 5174,
+    "startCommand": "npm run subapp",
+    "stopCommand": "npm run subapp:stop",
+    "entry": "./ui/dist/index.html",
+    "buildCommand": "npm run build",
+    "requireBuild": true,
+    "routes": [
+      { "path": "/", "name": "文件列表" },
+      { "path": "/config", "name": "邮箱配置" }
+    ]
+  },
+  
+  "dependencies": {
+    "runtime": ["nodemailer", "imap", "mailparser", "commander", "express", "cors"]
+  }
+}

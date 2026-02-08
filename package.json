@@ -1,0 +1,40 @@
+{
+  "name": "@najie/email-cli",
+  "version": "0.2.0",
+  "description": "邮盘 - 邮箱云盘工具",
+  "type": "module",
+  "bin": {
+    "najie-email": "./bin/najie-email.js"
+  },
+  "main": "./lib/index.js",
+  "scripts": {
+    "subapp": "node ./bin/najie-email.js serve",
+    "subapp:stop": "node ./bin/najie-email.js serve --stop",
+    "dev": "concurrently \"npm run subapp\" \"npm run dev:ui\"",
+    "dev:ui": "vite --config ui/vite.config.js",
+    "build": "vite build --config ui/vite.config.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "nodemailer": "^7.0.13",
+    "imap": "^0.8.19",
+    "mailparser": "^3.9.1",
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.4.31",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.294.0",
+    "tailwindcss": "^3.3.5",
+    "vite": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
